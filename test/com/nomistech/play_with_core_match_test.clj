@@ -37,37 +37,57 @@
 ;;;; Match on non-scalar values
 
 (fact "Match on a vector"
-  (let [v3 3]
-    (match [1 'sym 3 4]
-      [1 'sym v3 x4] (str "x4 = " x4)))
-  => "x4 = 4")
-
-(fact "Match on a map"
-  (let [v2 2
-        v3 3]
-    (match {:a 1
-            :b 2
-            3 :c
-            :d 4}
-      {:a 1
-       :b v2
-       v3 :c
-       :d x4}
-      (str "x4 = " x4)))
-  => "x4 = 4")
-
-(fact "Match on a set"
-  (let [v3 3]
-    (match #{1 'sym 3}
-      #{1 'sym v3} :this))
-  => :this)
-
-(fact "Match on nested non-scalar values"
   (fact "Trivial"
     (let [v1 1
           v2 2])
     (match [1 2]
       [v1 v2] :this)
+    => :this)
+  (fact "Using lots of gubbins"
+    (let [v3 3]
+      (match [1 'sym 3 4]
+        [1 'sym v3 x4] (str "x4 = " x4)))
+    => "x4 = 4"))
+
+(fact "Match on a map"
+  (fact "Trivial"
+    (let [v1 1]
+      (match {:a 1}
+        {:a v1} :this))
+    => :this)
+  (fact "Using lots of gubbins"
+    (let [v2 2
+          v3 3]
+      (match {:a 1
+              :b 2
+              3 :c
+              :d 4}
+        {:a 1
+         :b v2
+         v3 :c
+         :d x4}
+        (str "x4 = " x4)))
+    => "x4 = 4"))
+
+(fact "Match on a set"
+  (fact "Trivial"
+    (let [v1 1]
+      (match #{1}
+        #{v1} :this))
+    => :this)
+  (fact "Using lots of gubbins"
+    (let [v3 3]
+      (match #{1 'sym 3}
+        #{1 'sym v3} :this))
+    => :this))
+
+(fact "Match on nested non-scalar values"
+  (fact "Trivial"
+    (let [v-v1 1
+          v-v2 2
+          m-v1 1]
+      (match [[1 2] {:a 1}]
+        [[v-v1 v-v2] {:a m-v1}] :this))
     => :this)
   (fact "Using lots of gubbins"
     (let [v-v3 3
