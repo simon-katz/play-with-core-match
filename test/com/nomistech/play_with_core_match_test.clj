@@ -101,6 +101,16 @@
         #{1 'sym v3} :this))
     => :this))
 
+(fact "Match on a sequence"
+  (fact "Trivial"
+    (match '(1 2 3 4)
+      ([1 2 3 4] :seq) :this)
+    => :this)
+  (fact "Using _ and &"
+    (match '(1 2 3 4)
+      ([_ 2 & ([a & b] :seq)] :seq) [:a1 a b])
+    [:a1 3 '(4)]))
+
 (fact "Match on nested non-scalar values"
   (fact "Trivial"
     (let [v-v1 1
