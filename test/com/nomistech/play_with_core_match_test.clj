@@ -18,8 +18,8 @@
   => :this)
 
 (fact "Match on a quoted symbol"
-  (match 'x
-    'x :this)
+  (match 'sym
+    'sym :this)
   => :this)
 
 (fact "Match on the value of a local binding"
@@ -38,42 +38,54 @@
 
 (fact "Match on a vector"
   (let [v 1]
-    (match [1 'x 1 1]
-      [1 'x v x] (str "x = " x)))
+    (match [1 'sym 1 1]
+      [1 'sym v x] (str "x = " x)))
   => "x = 1")
 
 (fact "Match on a map"
-  (let [a :a b :b]
-    (match {:a :b}
-      {a b} :this))
+  (let [a :a
+        b 2]
+    (match {:a 2 2 :a}
+      {a b b :a} :this))
   => :this)
 
 (fact "Match on a set"
   (let [a :a
-        b :b]
-    (match #{:a :b}
+        b 2]
+    (match #{:a 2}
       #{a b} :this))
   => :this)
 
 (fact "Match on nested non-scalar values"
   (let [v 1
         a :a
-        b :b]
-    (match [[1 'x 1 1] {:a :b}]
-      [[1 'x v x] {a b}] [(str "x = " x) :this]))
-  => ["x = 1" :this])
+        b 2]
+    (match [[1 'sym 1 1] {:a 2 2 :a}]
+      [[1 'sym v x] {a b b a}] (str "x = " x)))
+  => "x = 1")
 
-(fact "About numbers in maps"
-  (fact "Numeric values are allowed"
-    (match {:a 1}
-      {:a 1} :this)
+(fact "About non- clojure.lang.Named in maps"
+  ;; Note that numbers and quoted symbols are not instances
+  ;; of `clojure.lang.Named`.
+  (fact "Such values are allowed as map values"
+    (match {:num 1 :q-sym 'sym}
+      {:num 1 :q-sym 'sym} :this)
     => :this)
-  (fact "Numeric literal map keys are not allowed"
+  (fact "Numeric literals are not allowed as map keys in match patterns"
     (macroexpand-1 '(match :whatever
-                      {1 :b} :this))
+                      {1 :a} :this))
     => (throws java.lang.ClassCastException))
-  (fact "Numeric map keys are allowed if they are not literals"
+  (fact "Quoted symbols are not allowed as map keys in match patterns"
+    (macroexpand-1 '(match :whatever
+                      {'sym :a} :this))
+    => (throws java.lang.ClassCastException))
+  (fact "If they are not literals, numbers are allowed as map keys in match patterns"
     (let [v 1]
-      (match {1 :b}
+      (match {1 :a}
+        {v :a} :this))
+    => :this)
+  (fact "If they are not literals, quoted symbols are allowed as map keys in match patterns"
+    (let [v 'sym]
+      (match {'sym :b}
         {v :b} :this))
     => :this))
