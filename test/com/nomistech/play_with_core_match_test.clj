@@ -69,6 +69,12 @@
       (match {:a 1 :b 2 :ignored 9999}
         {:a v1 :b _} :this))
     => :this)
+  (fact "Constrain the keys"
+    (let [x {:a 1 :b 1 :not-ignored 333}]
+      (match x
+        ({:a 1 :b 1} :only [:a :b]) :not-this
+        :else :this))
+    => :this)
   (fact "Using lots of gubbins"
     (let [v2 2
           v3 3]
@@ -81,13 +87,7 @@
          v3 :c
          :d x4}
         (str "x4 = " x4)))
-    => "x4 = 4")
-  (fact "Constrain the keys"
-    (let [x {:a 1 :b 1 :not-ignored 333}]
-      (match x
-        ({:a 1 :b 1} :only [:a :b]) :not-this
-        :else :this))
-    => :this))
+    => "x4 = 4"))
 
 (fact "Match on a set"
   (fact "Trivial"
@@ -145,24 +145,26 @@
     (match {:num 1 :q-sym 'sym}
       {:num 1 :q-sym 'sym} :this)
     => :this)
-  (fact "Numeric literals are not allowed as map keys in match patterns"
-    (macroexpand-1 '(match :whatever
-                      {1 :a} :this))
-    => (throws java.lang.ClassCastException))
-  (fact "Quoted symbols are not allowed as map keys in match patterns"
-    (macroexpand-1 '(match :whatever
-                      {'sym :a} :this))
-    => (throws java.lang.ClassCastException))
-  (fact "If they are not literals, numbers are allowed as map keys in match patterns"
-    (let [v 1]
-      (match {1 :a}
-        {v :a} :this))
-    => :this)
-  (fact "If they are not literals, quoted symbols are allowed as map keys in match patterns"
-    (let [v 'sym]
-      (match {'sym :b}
-        {v :b} :this))
-    => :this))
+  (fact "Literal non- clojure.lang.Named instances are not allowed as map keys in match patterns"
+    (fact "Numbers"
+      (macroexpand-1 '(match :whatever
+                        {1 :a} :this))
+      => (throws java.lang.ClassCastException))
+    (fact "Quoted symbols"
+      (macroexpand-1 '(match :whatever
+                        {'sym :a} :this))
+      => (throws java.lang.ClassCastException)))
+  (fact "Variables bound to non- clojure.lang.Named values are allowed as map keys in match patterns"
+    (fact "Numbers"
+      (let [v 1]
+        (match {1 :a}
+          {v :a} :this))
+      => :this)
+    (fact "Quoted symbols"
+      (let [v 'sym]
+        (match {'sym :b}
+          {v :b} :this))
+      => :this)))
 
 (fact "Cannot create bindings in the key position of a map entry"
   ;; I can't work out how to make a test for this.
