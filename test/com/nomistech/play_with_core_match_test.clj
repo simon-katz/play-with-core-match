@@ -37,32 +37,56 @@
 ;;;; Match on non-scalar values
 
 (fact "Match on a vector"
-  (let [v 1]
-    (match [1 'sym 1 1]
-      [1 'sym v x] (str "x = " x)))
-  => "x = 1")
+  (let [v3 3]
+    (match [1 'sym 3 4]
+      [1 'sym v3 x4] (str "x4 = " x4)))
+  => "x4 = 4")
 
 (fact "Match on a map"
-  (let [a :a
-        b 2]
-    (match {:a 2 2 :a}
-      {a b b :a} :this))
-  => :this)
+  (let [v2 2
+        v3 3]
+    (match {:a 1
+            :b 2
+            3 :c
+            :d 4}
+      {:a 1
+       :b v2
+       v3 :c
+       :d x4}
+      (str "x4 = " x4)))
+  => "x4 = 4")
 
 (fact "Match on a set"
-  (let [a :a
-        b 2]
-    (match #{:a 2}
-      #{a b} :this))
+  (let [v3 3]
+    (match #{1 'sym 3}
+      #{1 'sym v3} :this))
   => :this)
 
 (fact "Match on nested non-scalar values"
-  (let [v 1
-        a :a
-        b 2]
-    (match [[1 'sym 1 1] {:a 2 2 :a}]
-      [[1 'sym v x] {a b b a}] (str "x = " x)))
-  => "x = 1")
+  (fact "Trivial"
+    (let [v1 1
+          v2 2])
+    (match [1 2]
+      [v1 v2] :this)
+    => :this)
+  (fact "Using lots of gubbins"
+    (let [v-v3 3
+          m-v2 2
+          m-v3 3]
+      (match [[1 'sym 3 4]
+              {:a 1
+               :b 2
+               3 :c
+               :d 4}]
+        [[1 'sym v-v3 v-x4]
+         {:a 1
+          :b m-v2
+          m-v3 :c
+          :d m-x4}]
+        [(str "v-x4 = " v-x4)
+         (str "m-x4 = " m-x4)]))
+    => ["v-x4 = 4"
+        "m-x4 = 4"]))
 
 (fact "About non- clojure.lang.Named in maps"
   ;; Note that numbers and quoted symbols are not instances
@@ -89,3 +113,25 @@
       (match {'sym :b}
         {v :b} :this))
     => :this))
+
+(fact "Cannot create bindings in the key position of a map entry"
+  ;; I can't work out how to make a test for this.
+  #_(fact
+      (clojure.walk/macroexpand-all '(match {:a 1}
+                                       {x 1} :this))
+      => (throws))
+  #_(fact
+      (match {:a 1}
+        {x 1} :this)
+      => (throws)))
+
+(fact "Cannot create bindings in a set"
+  ;; I can't work out how to make a test for this.
+  #_(fact
+      (clojure.walk/macroexpand-all '(match #{:a}
+                                       #{x} :this))
+      => (throws))
+  #_(fact
+      (match #{:a}
+        #{x} :this)
+      => (throws)))
