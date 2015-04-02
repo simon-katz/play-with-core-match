@@ -81,7 +81,13 @@
          v3 :c
          :d x4}
         (str "x4 = " x4)))
-    => "x4 = 4"))
+    => "x4 = 4")
+  (fact "Constrain the keys"
+    (let [x {:a 1 :b 1 :not-ignored 333}]
+      (match x
+        ({:a 1 :b 1} :only [:a :b]) :not-this
+        :else :this))
+    => :this))
 
 (fact "Match on a set"
   (fact "Trivial"
