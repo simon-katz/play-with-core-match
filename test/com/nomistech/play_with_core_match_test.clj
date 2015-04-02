@@ -33,6 +33,11 @@
     x (str "x = " x))
   => "x = 1")
 
+(fact "Match on anything"
+  (match 1
+    _ :this)
+  => :this)
+
 ;;;; ___________________________________________________________________________
 ;;;; Match on non-scalar values
 
@@ -40,8 +45,8 @@
   (fact "Trivial"
     (let [v1 1
           v2 2])
-    (match [1 2]
-      [v1 v2] :this)
+    (match [1 2 3 4]
+      [v1 v2 _ _] :this)
     => :this)
   (fact "Using lots of gubbins"
     (let [v3 3]
@@ -52,8 +57,8 @@
 (fact "Match on a map"
   (fact "Trivial"
     (let [v1 1]
-      (match {:a 1}
-        {:a v1} :this))
+      (match {:a 1 :b 2 :ignored 9999}
+        {:a v1 :b _} :this))
     => :this)
   (fact "Using lots of gubbins"
     (let [v2 2
