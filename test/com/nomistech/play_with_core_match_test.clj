@@ -210,8 +210,22 @@
 ;;;; ___________________________________________________________________________
 ;;;; As patterns
 
-(fact
-  (fact "A simple as pattern"
-    (match [[1 2 3 4]]
-      [([_ _ _ _] :as x)] x)
-    => [1 2 3 4]))
+(fact "A simple as pattern"
+  (match [[1 2 3 4]]
+    [([_ _ _ _] :as x)] x)
+  => [1 2 3 4])
+
+;;;; ___________________________________________________________________________
+;;;; Applying functions before doing the matching
+
+(fact "Applying functions before doing the matching" 
+  (fact
+    (match [0]
+      [(1 :<< inc)] :zero->one
+      :else :no-match)
+    => :zero->one)
+  (fact
+    (match [3]
+      [(2 :<< dec)] :three->two
+      :else :no-match)
+    => :three->two))
