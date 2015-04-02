@@ -52,7 +52,16 @@
     (let [v3 3]
       (match [1 'sym 3 4]
         [1 'sym v3 x4] (str "x4 = " x4)))
-    => "x4 = 4"))
+    => "x4 = 4")
+  (fact "Using &"
+    (fact "In a nested vector -- ok"
+      (match [[1 2 3 4 5]]
+        [[1 2 & r]] (str "r = " r))
+      => "r = [3 4 5]")
+    (fact "Not in a nested vector -- fucked and not explained I think ####"
+      (macroexpand-1 '(match [1 2 3 4 5]
+                        [1 2 & r] (str "r = " r)))
+      => (throws AssertionError))))
 
 (fact "Match on a map"
   (fact "Trivial"
