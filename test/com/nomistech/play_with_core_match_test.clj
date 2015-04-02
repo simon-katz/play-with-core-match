@@ -175,3 +175,33 @@
       (match #{:a}
         #{x} :this)
       => (throws)))
+
+;;;; ___________________________________________________________________________
+;;;; Or patterns
+
+(fact "An or pattern"
+  (match [1 2 3]
+    [1 (:or 2 3) 3] :this)
+  => :this)
+
+;;;; ___________________________________________________________________________
+;;;; Guards
+
+(fact "A guard"
+  (fact "A simple guard"
+    (match 2
+      (a :guard even?) :this)
+    => :this)
+  (fact "Multiple conditions in a guard"
+    (match 2
+      (a :guard [even? #(= 2 %)]) :this)
+    => :this))
+
+;;;; ___________________________________________________________________________
+;;;; As patterns
+
+(fact
+  (fact "A simple as pattern"
+    (match [[1 2 3 4]]
+      [([_ _ _ _] :as x)] x)
+    => [1 2 3 4]))
