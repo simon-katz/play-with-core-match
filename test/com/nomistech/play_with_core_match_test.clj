@@ -4,6 +4,24 @@
             [com.nomistech.play-with-core-match :refer :all]))
 
 ;;;; ___________________________________________________________________________
+
+;;;; #### Want to re-write this in the light of:
+
+;; This won't compile:
+;; 
+;; (match [:a :b :c]
+;;   [_ _] :two
+;;   [_ _ _ ] :three)
+
+;; But this is ok:
+
+(fact
+  (match [[:a :b :c]]
+    [[_ _]] :two
+    [[_ _ _ ]] :three)
+  => :three)
+
+;;;; ___________________________________________________________________________
 ;;;; Basics
 
 (fact "Match on a literal value"
