@@ -38,6 +38,26 @@
     _ :this)
   => :this)
 
+(def a-global-but-not-in-a-pattern 2)
+
+(fact "Special note on the interpretation of symbols"
+  (fact "A binding within the match"
+    (match 1
+      v v)
+    => 1)
+  (fact "Looks at local vars"
+    (let [my-local 2]
+      (match 1
+        my-local :not-this
+        v        :this))
+    => :this)
+  (fact "Does not look at globals"
+    a-global-but-not-in-a-pattern
+    => 2
+    (match 1
+      a-global-but-not-in-a-pattern a-global-but-not-in-a-pattern)
+    => 1))
+
 ;;;; ___________________________________________________________________________
 
 ;;;; #### Maybe want to re-write this in the light of:
