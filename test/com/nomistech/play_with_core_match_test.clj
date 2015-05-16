@@ -60,6 +60,10 @@
 ;;;; Match on non-scalar values
 
 (fact "Match on a vector"
+  (fact "Very trivial"
+    (match [1]
+      [1] :this)
+    => :this)
   (fact "Trivial"
     (let [v1 1
           v2 2])
