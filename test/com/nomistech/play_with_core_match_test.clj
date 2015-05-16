@@ -22,7 +22,7 @@
     'sym :this)
   => :this)
 
-(fact "Match on the value of a local binding"
+(fact "Match on a variable"
   (let [v 1]
     (match 1
       v :this))
