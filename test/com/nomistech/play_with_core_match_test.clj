@@ -46,11 +46,11 @@
       v v)
     => 1)
   (fact "Looks at local vars"
-    (let [my-local 2]
+    (let [v 2]
       (match 1
-        my-local :not-this
-        v        :this))
-    => :this)
+        v :not-this
+        w w))
+    => 1)
   (fact "Does not look at globals"
     a-global-but-not-in-a-pattern
     => 2
