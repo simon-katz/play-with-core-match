@@ -50,7 +50,7 @@
 
 ;; But this is ok:
 
-(fact
+(fact "Can match vectors of unknown length if you wrap the vector."
   (match [[:a :b :c]]
     [[_ _]] :two
     [[_ _ _ ]] :three)
